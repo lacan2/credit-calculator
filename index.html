@@ -51,17 +51,17 @@
 <body>
   <div class="calculator">
     <h2>Credit Consumption Calculator</h2>
-    <label for="area">Select Area:</label>
+    <label for="area">Select area:</label>
     <select id="area" onchange="updateTasks()">
       <option value="connect">Connect</option>
       <option value="harmonize">Harmonize</option>
       <option value="activate">Activate</option>
     </select>
 
-    <label for="task">Select Task:</label>
+    <label for="task">Select task:</label>
     <select id="task"></select>
 
-    <label for="data">Enter Data Processed (in rows or MB):</label>
+    <label for="data">Enter the volume of data processed (in rows or MB):</label>
     <input type="number" id="data" placeholder="Enter amount of data">
 
     <button onclick="calculateCredits()">Calculate Credits</button>
