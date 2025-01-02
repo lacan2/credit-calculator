@@ -65,12 +65,14 @@
       <option value="segment">Segment and Activation</option>
     </select>
 
+    <div class="description" id="areaDescription"></div>
+
     <label for="task">Select task:</label>
-    <select id="task" onchange="updateDescription()"></select>
+    <select id="task" onchange="updateDescriptionAndUnits()"></select>
 
-    <div class="description" id="description"></div>
+    <div class="description" id="taskDescription"></div>
 
-    <label for="data">Enter the volume of data processed (in rows, MB, or GB):</label>
+    <label for="data" id="dataLabel">Enter the volume of data processed:</label>
     <input type="number" id="data" placeholder="Enter amount of data">
 
     <button onclick="calculateCredits()">Calculate Credits</button>
@@ -79,35 +81,43 @@
   </div>
 
   <script>
-    // Define task multipliers and descriptions based on rate sheets
+    // Define descriptions and units for areas and tasks
+    const areaDescriptions = {
+      connect: "Processes and harmonizes data to unify profiles and enable sharing.",
+      analyze: "Provides tools to generate insights and make predictions based on data.",
+      act: "Enables real-time actions and data activation for campaigns and queries.",
+      realtime: "Handles sub-second real-time event processing for immediate responses.",
+      segment: "Manages and activates customer segments for marketing and analysis."
+    };
+
     const multipliers = {
       connect: {
-        "Data Pipeline (Batch)": { multiplier: 2000, description: "Processes data in batches for harmonization and unification." },
-        "Data Pipeline (Streaming)": { multiplier: 5000, description: "Processes streaming data in real time." },
-        "Data Transforms": { multiplier: 400, description: "Transforms data for analysis or sharing." },
-        "Unstructured Data Processed": { multiplier: 60, description: "Processes unstructured data, such as text or media." },
-        "Data Federation or Sharing": { multiplier: 70, description: "Accesses federated data or shares it across platforms." },
-        "Data Share": { multiplier: 800, description: "Shares structured data for external use." },
-        "Profile Unification": { multiplier: 100000, description: "Unifies user profiles from different data sources." }
+        "Data Pipeline (Batch)": { multiplier: 2000, description: "Processes data in batches for harmonization and unification.", unit: "rows" },
+        "Data Pipeline (Streaming)": { multiplier: 5000, description: "Processes streaming data in real time.", unit: "rows" },
+        "Data Transforms": { multiplier: 400, description: "Transforms data for analysis or sharing.", unit: "rows" },
+        "Unstructured Data Processed": { multiplier: 60, description: "Processes unstructured data, such as text or media.", unit: "MB" },
+        "Data Federation or Sharing": { multiplier: 70, description: "Accesses federated data or shares it across platforms.", unit: "rows" },
+        "Data Share": { multiplier: 800, description: "Shares structured data for external use.", unit: "rows" },
+        "Profile Unification": { multiplier: 100000, description: "Unifies user profiles from different data sources.", unit: "rows" }
       },
       analyze: {
-        "Calculated Insights (Batch)": { multiplier: 15, description: "Generates insights from batch data processing." },
-        "Calculated Insights (Streaming)": { multiplier: 800, description: "Generates real-time insights from streaming data." },
-        "Inferences": { multiplier: 3500, description: "Creates predictive inferences using AI/ML models." }
+        "Calculated Insights (Batch)": { multiplier: 15, description: "Generates insights from batch data processing.", unit: "rows" },
+        "Calculated Insights (Streaming)": { multiplier: 800, description: "Generates real-time insights from streaming data.", unit: "rows" },
+        "Inferences": { multiplier: 3500, description: "Creates predictive inferences using AI/ML models.", unit: "rows" }
       },
       act: {
-        "Data Queries": { multiplier: 2, description: "Executes queries on processed data." },
-        "Streaming Actions": { multiplier: 800, description: "Performs real-time actions on streaming data." },
-        "Batch Activation": { multiplier: 10, description: "Activates data in batch operations." },
-        "Activate DMO (Streaming)": { multiplier: 1600, description: "Activates streaming data for digital marketing." }
+        "Data Queries": { multiplier: 2, description: "Executes queries on processed data.", unit: "rows" },
+        "Streaming Actions": { multiplier: 800, description: "Performs real-time actions on streaming data.", unit: "rows" },
+        "Batch Activation": { multiplier: 10, description: "Activates data in batch operations.", unit: "rows" },
+        "Activate DMO (Streaming)": { multiplier: 1600, description: "Activates streaming data for digital marketing.", unit: "rows" }
       },
       realtime: {
-        "Sub-second Real-Time Events": { multiplier: 70000, description: "Processes events in sub-second real-time environments." }
+        "Sub-second Real-Time Events": { multiplier: 70000, description: "Processes events in sub-second real-time environments.", unit: "events" }
       },
       segment: {
-        "Segment Rows Processed": { multiplier: 20, description: "Processes customer segments for insights." },
-        "Batch Activation": { multiplier: 10, description: "Activates data for campaigns in batch." },
-        "Activate DMO (Streaming)": { multiplier: 1600, description: "Activates data streams for marketing or analysis." }
+        "Segment Rows Processed": { multiplier: 20, description: "Processes customer segments for insights.", unit: "rows" },
+        "Batch Activation": { multiplier: 10, description: "Activates data for campaigns in batch.", unit: "rows" },
+        "Activate DMO (Streaming)": { multiplier: 1600, description: "Activates data streams for marketing or analysis.", unit: "rows" }
       }
     };
 
@@ -115,7 +125,10 @@
     function updateTasks() {
       const area = document.getElementById("area").value;
       const taskSelect = document.getElementById("task");
+      const areaDescription = document.getElementById("areaDescription");
+
       taskSelect.innerHTML = "";
+      areaDescription.textContent = areaDescriptions[area] || "";
 
       for (const task in multipliers[area]) {
         const option = document.createElement("option");
@@ -123,19 +136,23 @@
         option.textContent = task;
         taskSelect.appendChild(option);
       }
-      updateDescription();
+      updateDescriptionAndUnits();
     }
 
-    // Update task description
-    function updateDescription() {
+    // Update task description and data unit label
+    function updateDescriptionAndUnits() {
       const area = document.getElementById("area").value;
       const task = document.getElementById("task").value;
-      const description = document.getElementById("description");
+      const taskDescription = document.getElementById("taskDescription");
+      const dataLabel = document.getElementById("dataLabel");
 
       if (multipliers[area] && multipliers[area][task]) {
-        description.textContent = multipliers[area][task].description;
+        const taskInfo = multipliers[area][task];
+        taskDescription.textContent = taskInfo.description;
+        dataLabel.textContent = `Enter the volume of data processed (in ${taskInfo.unit}):`;
       } else {
-        description.textContent = "";
+        taskDescription.textContent = "";
+        dataLabel.textContent = "Enter the volume of data processed:";
       }
     }
 
