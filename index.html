@@ -9,27 +9,13 @@
       font-family: Arial, sans-serif;
       margin: 20px;
     }
-    .container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
     .calculator {
-      width: 60%;
-    }
-    .description {
-      width: 35%;
-      padding: 10px;
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      background-color: #f9f9f9;
-      font-size: 14px;
-      color: #555;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     label {
       display: block;
@@ -60,45 +46,65 @@
       font-size: 18px;
       font-weight: bold;
     }
+    .info-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 1000;
+      width: 80%;
+      max-width: 500px;
+    }
+    .info-popup h2 {
+      margin-top: 0;
+    }
+    .info-popup .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="calculator">
-        <label for="area">Select area:</label>
-        <select id="area" onchange="updateTasks()">
-          <option value="" disabled selected>Select an area</option>
-          <option value="connect">Connect, Harmonize, and Unify</option>
-          <option value="analyze">Analyze and Predict</option>
-          <option value="act">Act</option>
-          <option value="realtime">E2E Real-Time Processing</option>
-          <option value="segment">Segment and Activation</option>
-        </select>
-      </div>
-      <div class="description" id="areaDescription">Select an area to see details here.</div>
-    </div>
+  <div class="calculator">
+    <h2>Credit Consumption Calculator</h2>
+    <label for="area">Select area:</label>
+    <select id="area" onchange="updateTasks()">
+      <option value="" disabled selected>Select an area</option>
+      <option value="connect">Connect, Harmonize, and Unify</option>
+      <option value="analyze">Analyze and Predict</option>
+      <option value="act">Act</option>
+      <option value="realtime">E2E Real-Time Processing</option>
+      <option value="segment">Segment and Activation</option>
+    </select>
 
-    <div class="row">
-      <div class="calculator">
-        <label for="task">Select task:</label>
-        <select id="task" onchange="updateDescriptionAndUnits()">
-          <option value="" disabled selected>Select a task</option>
-        </select>
-      </div>
-      <div class="description" id="taskDescription">Select a task to see details here.</div>
-    </div>
+    <label for="task">Select task:</label>
+    <select id="task" onchange="updateDescriptionAndUnits()">
+      <option value="" disabled selected>Select a task</option>
+    </select>
 
-    <div class="row">
-      <div class="calculator">
-        <label for="data" id="dataLabel">Enter the volume of data processed:</label>
-        <input type="number" id="data" placeholder="Enter amount of data">
+    <label for="data" id="dataLabel">Enter the volume of data processed:</label>
+    <input type="number" id="data" placeholder="Enter amount of data">
 
-        <button onclick="calculateCredits()">Calculate Credits</button>
+    <button onclick="calculateCredits()">Calculate Credits</button>
 
-        <div class="result" id="result"></div>
-      </div>
-    </div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <div class="info-popup" id="infoPopup">
+    <button class="close-button" onclick="closeInfoPopup()">&times;</button>
+    <h2 id="infoTitle"></h2>
+    <p id="infoDescription"></p>
   </div>
 
   <script>
@@ -141,13 +147,26 @@
       }
     };
 
+    function showInfoPopup(title, description) {
+      const infoPopup = document.getElementById("infoPopup");
+      document.getElementById("infoTitle").textContent = title;
+      document.getElementById("infoDescription").textContent = description;
+      infoPopup.style.display = "block";
+    }
+
+    function closeInfoPopup() {
+      document.getElementById("infoPopup").style.display = "none";
+    }
+
     function updateTasks() {
       const area = document.getElementById("area").value;
       const taskSelect = document.getElementById("task");
-      const areaDescription = document.getElementById("areaDescription");
 
       taskSelect.innerHTML = '<option value="" disabled selected>Select a task</option>';
-      areaDescription.textContent = areaDescriptions[area] || "Select an area to see details here.";
+
+      if (areaDescriptions[area]) {
+        showInfoPopup("Category: " + area, areaDescriptions[area]);
+      }
 
       if (multipliers[area]) {
         for (const task in multipliers[area]) {
@@ -157,22 +176,15 @@
           taskSelect.appendChild(option);
         }
       }
-      updateDescriptionAndUnits();
     }
 
     function updateDescriptionAndUnits() {
       const area = document.getElementById("area").value;
       const task = document.getElementById("task").value;
-      const taskDescription = document.getElementById("taskDescription");
-      const dataLabel = document.getElementById("dataLabel");
 
       if (multipliers[area] && multipliers[area][task]) {
         const taskInfo = multipliers[area][task];
-        taskDescription.textContent = `${taskInfo.description} Multiplier: ${taskInfo.multiplier}, Unit: ${taskInfo.unit}.`;
-        dataLabel.textContent = `Enter the volume of data processed (in ${taskInfo.unit}):`;
-      } else {
-        taskDescription.textContent = "Select a task to see details here.";
-        dataLabel.textContent = "Enter the volume of data processed:";
+        showInfoPopup("Task: " + task, taskInfo.description + " Multiplier: " + taskInfo.multiplier + " credits per " + taskInfo.unit + ".");
       }
     }
 
