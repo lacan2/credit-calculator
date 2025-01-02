@@ -11,22 +11,23 @@
     }
     .container {
       display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .row {
+      display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
     }
     .calculator {
-      width: 45%;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 60%;
     }
-    .information {
-      width: 45%;
-      padding: 20px;
+    .description {
+      width: 35%;
+      padding: 10px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: #f9f9f9;
       font-size: 14px;
       color: #555;
     }
@@ -63,75 +64,80 @@
 </head>
 <body>
   <div class="container">
-    <div class="calculator">
-      <h2>Credit Consumption Calculator</h2>
-      <label for="area">Select area:</label>
-      <select id="area" onchange="updateTasks()">
-        <option value="" disabled selected>Select an area</option>
-        <option value="connect">Connect, Harmonize, and Unify</option>
-        <option value="analyze">Analyze and Predict</option>
-        <option value="act">Act</option>
-        <option value="realtime">E2E Real-Time Processing</option>
-        <option value="segment">Segment and Activation</option>
-      </select>
-
-      <label for="task">Select task:</label>
-      <select id="task" onchange="updateDescriptionAndUnits()">
-        <option value="" disabled selected>Select a task</option>
-      </select>
-
-      <label for="data" id="dataLabel">Enter the volume of data processed:</label>
-      <input type="number" id="data" placeholder="Enter amount of data">
-
-      <button onclick="calculateCredits()">Calculate Credits</button>
-
-      <div class="result" id="result"></div>
+    <div class="row">
+      <div class="calculator">
+        <label for="area">Select area:</label>
+        <select id="area" onchange="updateTasks()">
+          <option value="" disabled selected>Select an area</option>
+          <option value="connect">Connect, Harmonize, and Unify</option>
+          <option value="analyze">Analyze and Predict</option>
+          <option value="act">Act</option>
+          <option value="realtime">E2E Real-Time Processing</option>
+          <option value="segment">Segment and Activation</option>
+        </select>
+      </div>
+      <div class="description" id="areaDescription">Select an area to see details here.</div>
     </div>
 
-    <div class="information">
-      <h2>Information</h2>
-      <div id="areaDescription"></div>
-      <div id="taskDescription"></div>
+    <div class="row">
+      <div class="calculator">
+        <label for="task">Select task:</label>
+        <select id="task" onchange="updateDescriptionAndUnits()">
+          <option value="" disabled selected>Select a task</option>
+        </select>
+      </div>
+      <div class="description" id="taskDescription">Select a task to see details here.</div>
+    </div>
+
+    <div class="row">
+      <div class="calculator">
+        <label for="data" id="dataLabel">Enter the volume of data processed:</label>
+        <input type="number" id="data" placeholder="Enter amount of data">
+
+        <button onclick="calculateCredits()">Calculate Credits</button>
+
+        <div class="result" id="result"></div>
+      </div>
     </div>
   </div>
 
   <script>
     const areaDescriptions = {
-      connect: "Processes and harmonizes data to unify profiles and enable sharing.",
-      analyze: "Provides tools to generate insights and make predictions based on data.",
-      act: "Enables real-time actions and data activation for campaigns and queries.",
-      realtime: "Handles sub-second real-time event processing for immediate responses.",
-      segment: "Manages and activates customer segments for marketing and analysis."
+      connect: "This area focuses on ingesting, transforming, and sharing data between systems. It includes tasks like data pipelines, federation, and profile unification, ensuring seamless integration across platforms.",
+      analyze: "This area provides tools to derive insights and make data-driven predictions. Tasks include generating calculated insights and creating inferences using machine learning models.",
+      act: "This area enables real-time actions and execution of marketing strategies. Tasks involve executing data queries, batch activations, and streaming actions.",
+      realtime: "E2E Real-Time Processing handles high-speed event processing, enabling immediate decision-making and event-driven systems.",
+      segment: "Segment and Activation focuses on customer segmentation and activation for marketing campaigns, including batch and streaming operations."
     };
 
     const multipliers = {
       connect: {
-        "Data Pipeline (Batch)": { multiplier: 2000, description: "Processes data in batches for harmonization and unification.", unit: "rows" },
-        "Data Pipeline (Streaming)": { multiplier: 5000, description: "Processes streaming data in real time.", unit: "rows" },
-        "Data Transforms": { multiplier: 400, description: "Transforms data for analysis or sharing.", unit: "rows" },
-        "Unstructured Data Processed": { multiplier: 60, description: "Processes unstructured data, such as text or media.", unit: "MB" },
-        "Data Federation or Sharing": { multiplier: 70, description: "Accesses federated data or shares it across platforms.", unit: "rows" },
-        "Data Share": { multiplier: 800, description: "Shares structured data for external use.", unit: "rows" },
-        "Profile Unification": { multiplier: 100000, description: "Unifies user profiles from different data sources.", unit: "rows" }
+        "Data Pipeline (Batch)": { multiplier: 2000, description: "Processes data in batches for harmonization and unification across platforms.", unit: "rows" },
+        "Data Pipeline (Streaming)": { multiplier: 5000, description: "Processes continuous data streams in real-time scenarios.", unit: "rows" },
+        "Data Transforms": { multiplier: 400, description: "Transforms structured or semi-structured data for integration and analysis.", unit: "rows" },
+        "Unstructured Data Processed": { multiplier: 60, description: "Handles unstructured data formats like images, videos, or text for processing.", unit: "MB" },
+        "Data Federation or Sharing": { multiplier: 70, description: "Facilitates accessing federated data sources or sharing structured datasets.", unit: "rows" },
+        "Data Share": { multiplier: 800, description: "Shares processed data externally to partners or systems.", unit: "rows" },
+        "Profile Unification": { multiplier: 100000, description: "Combines multiple user data points to create unified profiles.", unit: "rows" }
       },
       analyze: {
-        "Calculated Insights (Batch)": { multiplier: 15, description: "Generates insights from batch data processing.", unit: "rows" },
-        "Calculated Insights (Streaming)": { multiplier: 800, description: "Generates real-time insights from streaming data.", unit: "rows" },
-        "Inferences": { multiplier: 3500, description: "Creates predictive inferences using AI/ML models.", unit: "rows" }
+        "Calculated Insights (Batch)": { multiplier: 15, description: "Generates actionable insights from batch data processing.", unit: "rows" },
+        "Calculated Insights (Streaming)": { multiplier: 800, description: "Provides real-time analytics from streaming data.", unit: "rows" },
+        "Inferences": { multiplier: 3500, description: "Creates predictive models and AI-driven inferences.", unit: "rows" }
       },
       act: {
-        "Data Queries": { multiplier: 2, description: "Executes queries on processed data.", unit: "rows" },
-        "Streaming Actions": { multiplier: 800, description: "Performs real-time actions on streaming data.", unit: "rows" },
-        "Batch Activation": { multiplier: 10, description: "Activates data in batch operations.", unit: "rows" },
-        "Activate DMO (Streaming)": { multiplier: 1600, description: "Activates streaming data for digital marketing.", unit: "rows" }
+        "Data Queries": { multiplier: 2, description: "Executes complex data queries for actionable insights.", unit: "rows" },
+        "Streaming Actions": { multiplier: 800, description: "Enables real-time responses and actions based on streaming data.", unit: "rows" },
+        "Batch Activation": { multiplier: 10, description: "Activates datasets for campaigns in batch operations.", unit: "rows" },
+        "Activate DMO (Streaming)": { multiplier: 1600, description: "Activates dynamic marketing operations for streaming data.", unit: "rows" }
       },
       realtime: {
-        "Sub-second Real-Time Events": { multiplier: 70000, description: "Processes events in sub-second real-time environments.", unit: "events" }
+        "Sub-second Real-Time Events": { multiplier: 70000, description: "Processes events in real-time environments within milliseconds.", unit: "events" }
       },
       segment: {
-        "Segment Rows Processed": { multiplier: 20, description: "Processes customer segments for insights.", unit: "rows" },
-        "Batch Activation": { multiplier: 10, description: "Activates data for campaigns in batch.", unit: "rows" },
-        "Activate DMO (Streaming)": { multiplier: 1600, description: "Activates data streams for marketing or analysis.", unit: "rows" }
+        "Segment Rows Processed": { multiplier: 20, description: "Processes customer segments for targeted insights and actions.", unit: "rows" },
+        "Batch Activation": { multiplier: 10, description: "Activates customer segments in batch for campaigns.", unit: "rows" },
+        "Activate DMO (Streaming)": { multiplier: 1600, description: "Streams activation data dynamically for digital marketing.", unit: "rows" }
       }
     };
 
@@ -141,7 +147,7 @@
       const areaDescription = document.getElementById("areaDescription");
 
       taskSelect.innerHTML = '<option value="" disabled selected>Select a task</option>';
-      areaDescription.textContent = areaDescriptions[area] || "";
+      areaDescription.textContent = areaDescriptions[area] || "Select an area to see details here.";
 
       if (multipliers[area]) {
         for (const task in multipliers[area]) {
@@ -165,7 +171,7 @@
         taskDescription.textContent = `${taskInfo.description} Multiplier: ${taskInfo.multiplier}, Unit: ${taskInfo.unit}.`;
         dataLabel.textContent = `Enter the volume of data processed (in ${taskInfo.unit}):`;
       } else {
-        taskDescription.textContent = "";
+        taskDescription.textContent = "Select a task to see details here.";
         dataLabel.textContent = "Enter the volume of data processed:";
       }
     }
