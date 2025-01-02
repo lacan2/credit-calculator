@@ -53,15 +53,15 @@
     <h2>Credit Consumption Calculator</h2>
     <label for="area">Select area:</label>
     <select id="area" onchange="updateTasks()">
-      <option value="connect">Connect</option>
-      <option value="harmonize">Harmonize</option>
-      <option value="activate">Activate</option>
+      <option value="connect">Connect, Harmonize, and Unify</option>
+      <option value="analyze">Analyze and Predict</option>
+      <option value="act">Act</option>
     </select>
 
     <label for="task">Select task:</label>
     <select id="task"></select>
 
-    <label for="data">Enter the volume of data processed (in rows or MB):</label>
+    <label for="data">Enter the volume of data processed (in rows, MB, or GB):</label>
     <input type="number" id="data" placeholder="Enter amount of data">
 
     <button onclick="calculateCredits()">Calculate Credits</button>
@@ -70,28 +70,27 @@
   </div>
 
   <script>
-    // Define task multipliers
+    // Define task multipliers based on rate sheets
     const multipliers = {
       connect: {
-        "Batch Data Pipeline": 2000,
-        "Streaming Data Pipeline": 2000,
-        "Data Share": 800,
-        "Unstructured Data Processed": 60
-      },
-      harmonize: {
-        "Batch Profile Unification": 100000,
-        "Segment Rows Processed": 20,
-        "Batch Calculated Insights": 15,
-        "Streaming Calculated Insights": 800
-      },
-      activate: {
-        "Accelerated Data Queries": 2,
-        "Data Queries": 2,
+        "Data Pipeline (Batch)": 2000,
+        "Data Pipeline (Streaming)": 5000,
+        "Data Transforms": 400,
+        "Unstructured Data Processed": 60,
         "Data Federation or Sharing": 70,
-        "Inferences": 3500,
-        "Real-Time Profile API": 900,
+        "Data Share": 800,
+        "Profile Unification": 100000
+      },
+      analyze: {
+        "Calculated Insights (Batch)": 15,
+        "Calculated Insights (Streaming)": 800,
+        "Inferences": 3500
+      },
+      act: {
+        "Data Queries": 2,
         "Streaming Actions": 800,
-        "Batch Activation": 10
+        "Batch Activation": 10,
+        "Activate DMO (Streaming)": 1600
       }
     };
 
@@ -124,7 +123,13 @@
       }
 
       const multiplier = multipliers[area][task];
-      const credits = (data / 1_000_000) * multiplier;
+      let unit = 1_000_000; // Default to rows/MB
+
+      if (task.includes("GB")) {
+        unit = 1_000; // Convert GB to MB
+      }
+
+      const credits = (data / unit) * multiplier;
 
       document.getElementById("result").textContent = `Credits Consumed: ${credits.toFixed(2)}`;
     }
