@@ -9,13 +9,26 @@
       font-family: Arial, sans-serif;
       margin: 20px;
     }
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
     .calculator {
-      max-width: 400px;
-      margin: auto;
+      width: 45%;
       padding: 20px;
       border: 1px solid #ccc;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .information {
+      width: 45%;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      color: #555;
     }
     label {
       display: block;
@@ -46,46 +59,43 @@
       font-size: 18px;
       font-weight: bold;
     }
-    .description {
-      margin-top: 5px;
-      margin-bottom: 10px;
-      font-size: 14px;
-      color: #555;
-    }
   </style>
 </head>
 <body>
-  <div class="calculator">
-    <h2>Credit Consumption Calculator</h2>
-    <label for="area">Select area:</label>
-    <select id="area" onchange="updateTasks()">
-      <option value="" disabled selected>Select an area</option>
-      <option value="connect">Connect, Harmonize, and Unify</option>
-      <option value="analyze">Analyze and Predict</option>
-      <option value="act">Act</option>
-      <option value="realtime">E2E Real-Time Processing</option>
-      <option value="segment">Segment and Activation</option>
-    </select>
+  <div class="container">
+    <div class="calculator">
+      <h2>Credit Consumption Calculator</h2>
+      <label for="area">Select area:</label>
+      <select id="area" onchange="updateTasks()">
+        <option value="" disabled selected>Select an area</option>
+        <option value="connect">Connect, Harmonize, and Unify</option>
+        <option value="analyze">Analyze and Predict</option>
+        <option value="act">Act</option>
+        <option value="realtime">E2E Real-Time Processing</option>
+        <option value="segment">Segment and Activation</option>
+      </select>
 
-    <div class="description" id="areaDescription"></div>
+      <label for="task">Select task:</label>
+      <select id="task" onchange="updateDescriptionAndUnits()">
+        <option value="" disabled selected>Select a task</option>
+      </select>
 
-    <label for="task">Select task:</label>
-    <select id="task" onchange="updateDescriptionAndUnits()">
-      <option value="" disabled selected>Select a task</option>
-    </select>
+      <label for="data" id="dataLabel">Enter the volume of data processed:</label>
+      <input type="number" id="data" placeholder="Enter amount of data">
 
-    <div class="description" id="taskDescription"></div>
+      <button onclick="calculateCredits()">Calculate Credits</button>
 
-    <label for="data" id="dataLabel">Enter the volume of data processed:</label>
-    <input type="number" id="data" placeholder="Enter amount of data">
+      <div class="result" id="result"></div>
+    </div>
 
-    <button onclick="calculateCredits()">Calculate Credits</button>
-
-    <div class="result" id="result"></div>
+    <div class="information">
+      <h2>Information</h2>
+      <div id="areaDescription"></div>
+      <div id="taskDescription"></div>
+    </div>
   </div>
 
   <script>
-    // Define descriptions and units for areas and tasks
     const areaDescriptions = {
       connect: "Processes and harmonizes data to unify profiles and enable sharing.",
       analyze: "Provides tools to generate insights and make predictions based on data.",
@@ -125,7 +135,6 @@
       }
     };
 
-    // Populate tasks based on selected area
     function updateTasks() {
       const area = document.getElementById("area").value;
       const taskSelect = document.getElementById("task");
@@ -145,7 +154,6 @@
       updateDescriptionAndUnits();
     }
 
-    // Update task description and data unit label
     function updateDescriptionAndUnits() {
       const area = document.getElementById("area").value;
       const task = document.getElementById("task").value;
@@ -154,7 +162,7 @@
 
       if (multipliers[area] && multipliers[area][task]) {
         const taskInfo = multipliers[area][task];
-        taskDescription.textContent = taskInfo.description;
+        taskDescription.textContent = `${taskInfo.description} Multiplier: ${taskInfo.multiplier}, Unit: ${taskInfo.unit}.`;
         dataLabel.textContent = `Enter the volume of data processed (in ${taskInfo.unit}):`;
       } else {
         taskDescription.textContent = "";
@@ -162,7 +170,6 @@
       }
     }
 
-    // Calculate credits
     function calculateCredits() {
       const area = document.getElementById("area").value;
       const task = document.getElementById("task").value;
@@ -184,13 +191,7 @@
       }
 
       const multiplier = multipliers[area][task].multiplier;
-      let unit = 1_000_000; // Default to rows/MB
-
-      if (task.includes("GB")) {
-        unit = 1_000; // Convert GB to MB
-      }
-
-      const credits = (data / unit) * multiplier;
+      const credits = (data / 1_000_000) * multiplier;
 
       document.getElementById("result").textContent = `Credits Consumed: ${credits.toFixed(2)}`;
     }
