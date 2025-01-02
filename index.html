@@ -58,6 +58,7 @@
     <h2>Credit Consumption Calculator</h2>
     <label for="area">Select area:</label>
     <select id="area" onchange="updateTasks()">
+      <option value="" disabled selected>Select an area</option>
       <option value="connect">Connect, Harmonize, and Unify</option>
       <option value="analyze">Analyze and Predict</option>
       <option value="act">Act</option>
@@ -68,7 +69,9 @@
     <div class="description" id="areaDescription"></div>
 
     <label for="task">Select task:</label>
-    <select id="task" onchange="updateDescriptionAndUnits()"></select>
+    <select id="task" onchange="updateDescriptionAndUnits()">
+      <option value="" disabled selected>Select a task</option>
+    </select>
 
     <div class="description" id="taskDescription"></div>
 
@@ -127,14 +130,16 @@
       const taskSelect = document.getElementById("task");
       const areaDescription = document.getElementById("areaDescription");
 
-      taskSelect.innerHTML = "";
+      taskSelect.innerHTML = '<option value="" disabled selected>Select a task</option>';
       areaDescription.textContent = areaDescriptions[area] || "";
 
-      for (const task in multipliers[area]) {
-        const option = document.createElement("option");
-        option.value = task;
-        option.textContent = task;
-        taskSelect.appendChild(option);
+      if (multipliers[area]) {
+        for (const task in multipliers[area]) {
+          const option = document.createElement("option");
+          option.value = task;
+          option.textContent = task;
+          taskSelect.appendChild(option);
+        }
       }
       updateDescriptionAndUnits();
     }
@@ -156,17 +161,24 @@
       }
     }
 
-    // Initial task population
-    updateTasks();
-
     // Calculate credits
     function calculateCredits() {
       const area = document.getElementById("area").value;
       const task = document.getElementById("task").value;
       const data = parseFloat(document.getElementById("data").value);
 
+      if (!area) {
+        alert("Please select an area.");
+        return;
+      }
+
+      if (!task) {
+        alert("Please select a task.");
+        return;
+      }
+
       if (isNaN(data) || data <= 0) {
-        document.getElementById("result").textContent = "Please enter a valid amount of data.";
+        alert("Please enter a valid amount of data.");
         return;
       }
 
