@@ -8,10 +8,11 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+      display: flex;
+      gap: 20px;
     }
     .calculator {
-      max-width: 400px;
-      margin: auto;
+      width: 60%;
       padding: 20px;
       border: 1px solid #ccc;
       border-radius: 8px;
@@ -47,31 +48,23 @@
       font-weight: bold;
     }
     .info-popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      border: 1px solid #ccc;
+      width: 35%;
       padding: 20px;
+      border: 1px solid #ccc;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-      display: none;
-      z-index: 1000;
-      width: 80%;
-      max-width: 500px;
+      background-color: #f9f9f9;
+      display: block;
     }
     .info-popup h2 {
       margin-top: 0;
+      font-size: 18px;
+      color: #333;
     }
-    .info-popup .close-button {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
+    .info-popup p {
+      margin: 8px 0;
+      color: #555;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -102,9 +95,8 @@
   </div>
 
   <div class="info-popup" id="infoPopup">
-    <button class="close-button" onclick="closeInfoPopup()">&times;</button>
-    <h2 id="infoTitle"></h2>
-    <p id="infoDescription"></p>
+    <h2 id="infoTitle">Information</h2>
+    <p id="infoDescription">Select a category or task to see detailed information.</p>
   </div>
 
   <script>
@@ -147,25 +139,16 @@
       }
     };
 
-    function showInfoPopup(title, description) {
-      const infoPopup = document.getElementById("infoPopup");
-      document.getElementById("infoTitle").textContent = title;
-      document.getElementById("infoDescription").textContent = description;
-      infoPopup.style.display = "block";
-    }
-
-    function closeInfoPopup() {
-      document.getElementById("infoPopup").style.display = "none";
-    }
-
     function updateTasks() {
       const area = document.getElementById("area").value;
       const taskSelect = document.getElementById("task");
+      const infoPopup = document.getElementById("infoPopup");
 
       taskSelect.innerHTML = '<option value="" disabled selected>Select a task</option>';
 
       if (areaDescriptions[area]) {
-        showInfoPopup("Category: " + area, areaDescriptions[area]);
+        document.getElementById("infoTitle").textContent = "Category: " + area;
+        document.getElementById("infoDescription").textContent = areaDescriptions[area];
       }
 
       if (multipliers[area]) {
@@ -181,10 +164,12 @@
     function updateDescriptionAndUnits() {
       const area = document.getElementById("area").value;
       const task = document.getElementById("task").value;
+      const infoPopup = document.getElementById("infoPopup");
 
       if (multipliers[area] && multipliers[area][task]) {
         const taskInfo = multipliers[area][task];
-        showInfoPopup("Task: " + task, taskInfo.description + " Multiplier: " + taskInfo.multiplier + " credits per " + taskInfo.unit + ".");
+        document.getElementById("infoTitle").textContent = "Task: " + task;
+        document.getElementById("infoDescription").textContent = taskInfo.description + " Multiplier: " + taskInfo.multiplier + " credits per " + taskInfo.unit + ".";
       }
     }
 
