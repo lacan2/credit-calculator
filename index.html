@@ -50,16 +50,9 @@
     .info-popup {
       width: 35%;
       padding: 20px;
-     /* border: 1px solid #ccc; */
       border-radius: 8px;
-     /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); */
       background-color: #f9f9f9;
       display: block;
-    }
-    .info-popup h2 {
-      margin-top: 0;
-      font-size: 18px;
-      color: #333;
     }
     .info-popup p {
       margin: 8px 0;
@@ -81,9 +74,9 @@
       <option value="segment">Segment and Activation</option>
     </select>
 
-    <label for="task">Select Use Type:</label>
+    <label for="task">Select Usage Type:</label>
     <select id="task" onchange="updateDescriptionAndUnits()">
-      <option value="" disabled selected>Select a use type</option>
+      <option value="" disabled selected>Select a usage type</option>
     </select>
 
     <label for="data" id="dataLabel">Enter the volume of data processed:</label>
@@ -95,8 +88,7 @@
   </div>
 
   <div class="info-popup" id="infoPopup">
-   <!-- <h2 id="infoTitle">Information</h2> -->
-    <p id="infoDescription">Select a category or use type to see detailed information.</p>
+    <p id="infoDescription">Select a category or usage type to see detailed information.</p>
   </div>
 
   <script>
@@ -144,10 +136,9 @@
       const area = document.getElementById("area").value;
       const taskSelect = document.getElementById("task");
 
-      taskSelect.innerHTML = '<option value="" disabled selected>Select a use type</option>';
+      taskSelect.innerHTML = '<option value="" disabled selected>Select a usage type</option>';
 
       if (areaDescriptions[area]) {
-        document.getElementById("infoTitle").textContent = "Category: " + area;
         document.getElementById("infoDescription").textContent = areaDescriptions[area];
       }
 
@@ -167,7 +158,6 @@
 
       if (multipliers[area] && multipliers[area][task]) {
         const taskInfo = multipliers[area][task];
-        document.getElementById("infoTitle").textContent = "Use Type: " + task;
         document.getElementById("infoDescription").textContent = taskInfo.description;
         document.getElementById("dataLabel").textContent = `Enter the volume of data processed (${taskInfo.unit}):`;
       }
@@ -184,7 +174,7 @@
       }
 
       if (!task) {
-        alert("Please select a use type.");
+        alert("Please select a usage type.");
         return;
       }
 
