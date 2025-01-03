@@ -102,33 +102,33 @@
 
     const multipliers = {
       connect: {
-        "Data Pipeline (Batch)": { multiplier: 2000, description: "Processes data in structured batches for harmonization and unification across systems.", unit: "Rows" },
-        "Data Pipeline (Streaming)": { multiplier: 5000, description: "Manages continuous data streams in real-time scenarios, supporting immediate data availability.", unit: "Rows" },
-        "Data Transforms": { multiplier: 400, description: "Converts raw, structured, or semi-structured data into formats optimized for analytics and sharing.", unit: "Rows" },
-        "Unstructured Data Processed": { multiplier: 60, description: "Handles unstructured data formats such as images, videos, and text, making them accessible for analysis.", unit: "MB" },
-        "Data Federation or Sharing": { multiplier: 70, description: "Facilitates the secure sharing or federated access of large datasets across systems.", unit: "Rows" },
-        "Data Share": { multiplier: 800, description: "Supports sharing pre-processed structured data with external partners or systems.", unit: "Rows" },
-        "Profile Unification": { multiplier: 100000, description: "Consolidates multiple data points across sources into unified profiles for accurate customer data.", unit: "Rows" },
-        "Private Connect Data Processed": { multiplier: 500, description: "Ensures secure processing of sensitive data over private connections for compliance and privacy.", unit: "Gb" }
+        "Data Pipeline (Batch)": { multiplier: 2000, description: "Processes data in structured batches for harmonization and unification across systems. Usage is calculated based on the amount of batch data processed by Data Cloud data streams across all connectors.", unit: "Rows" },
+        "Data Pipeline (Streaming)": { multiplier: 5000, description: "Manages continuous data streams in real-time scenarios, supporting immediate data availability. Usage is calculated based on the number of records ingested by data streams with stream processing, including web, mobile, and streaming ingestion APIs.", unit: "Rows" },
+        "Data Transforms": { multiplier: 400, description: "Converts raw, structured, or semi-structured data into formats optimized for analytics and sharing. Usage is calculated based on the higher of the number of rows read or written. For incremental batch data transforms, after the first run, usage is based on the number of rows that have changed since the previous run.", unit: "Rows" },
+        "Unstructured Data Processed": { multiplier: 60, description: "Handles unstructured data formats such as images, videos, and text, making them accessible for analysis. Usage is calculated based on the amount of unstructured data processed. For example, processing 100 PDF documents of 1 MB each results in 100 MB of usage.", unit: "MB" },
+        "Data Federation or Sharing": { multiplier: 70, description: "Facilitates the secure sharing or federated access of large datasets across systems. For data federation, usage is calculated based on the number of records returned from the source. For data sharing, usage is based on the number of rows returned to fulfill an external data lake’s request, with considerations for cross-region or cross-cloud queries.", unit: "Rows" },
+        "Data Share": { multiplier: 800, description: "Supports sharing pre-processed structured data with external partners or systems. Usage is calculated based on the number of new and changed records processed as part of the data share.", unit: "Rows" },
+        "Profile Unification": { multiplier: 100000, description: "Consolidates multiple data points across sources into unified profiles for accurate customer data. Usage is calculated based on the number of source profiles processed by an identity resolution ruleset. After the initial run, only new or modified source profiles are counted.", unit: "Rows" },
+        "Private Connect Data Processed": { multiplier: 500, description: "Ensures secure processing of sensitive data over private connections for compliance and privacy. Usage is calculated based on the volume of data in GBs transferred over the private network route, applicable to both data ingress into Data Cloud and egress to external data sources.", unit: "Gb" }
       },
       analyze: {
-        "Calculated Insights (Batch)": { multiplier: 15, description: "Generates detailed reports and insights from batch-processed data, revealing patterns and trends.", unit: "Rows" },
-        "Calculated Insights (Streaming)": { multiplier: 800, description: "Produces real-time insights by analyzing streaming data, enabling immediate actions.", unit: "Rows" },
-        "Inferences": { multiplier: 3500, description: "Applies advanced AI and machine learning models to derive predictions and inferences from datasets.", unit: "Inferences" }
+        "Calculated Insights (Batch)": { multiplier: 15, description: "Generates detailed reports and insights from batch-processed data, revealing patterns and trends. Usage is calculated based on the number of records in all underlying objects used in creating the Calculated Insight each time it runs.", unit: "Rows" },
+        "Calculated Insights (Streaming)": { multiplier: 800, description: "Produces real-time insights by analyzing streaming data, enabling immediate actions. Usage is calculated based on the number of records processed.", unit: "Rows" },
+        "Inferences": { multiplier: 3500, description: "Applies advanced AI and machine learning models to derive predictions and inferences from datasets. Usage is calculated based on the count of inferences, or outputs, of an AI Model in Einstein Studio.", unit: "Inferences" }
       },
       act: {
-        "Data Queries": { multiplier: 2, description: "Executes predefined or dynamic queries on datasets to extract relevant information.", unit: "Rows" },
-        "Streaming Actions": { multiplier: 800, description: "Enables real-time execution of actions based on streaming data, such as triggering notifications.", unit: "Rows" },
-        "Batch Activation": { multiplier: 10, description: "Activates datasets in bulk for targeted campaigns, ensuring efficiency in operations.", unit: "Rows" },
-        "Activate DMO (Streaming)": { multiplier: 1600, description: "Supports the dynamic activation of marketing operations using live streaming data.", unit: "Rows" }
+        "Data Queries": { multiplier: 2, description: "Executes predefined or dynamic queries on datasets to extract relevant information. Usage is calculated based on the number of records processed, which depends on the query structure and related factors such as the total number of records in the queried objects.", unit: "Rows" },
+        "Streaming Actions": { multiplier: 800, description: "Enables real-time execution of actions based on streaming data, such as triggering notifications. Usage is calculated based on the number of records processed.", unit: "Rows" },
+        "Batch Activation": { multiplier: 10, description: "Activates datasets in bulk for targeted campaigns, ensuring efficiency in operations. Usage is calculated based on the number of records processed.", unit: "Rows" },
+        "Activate DMO (Streaming)": { multiplier: 1600, description: "Supports the dynamic activation of marketing operations using live streaming data. Usage is calculated based on the number of records processed.", unit: "Rows" }
       },
       realtime: {
-        "Sub-second Real-Time Events": { multiplier: 70000, description: "Handles high-frequency events in milliseconds, ensuring immediate data processing.", unit: "Events & API" }
+        "Sub-second Real-Time Events": { multiplier: 70000, description: "Handles high-frequency events in milliseconds, ensuring immediate data processing. Usage is calculated based on the sum of profile events, engagement events, and API calls processed in the sub-second real-time layer, including web and mobile SDK traffic.", unit: "Events & API" }
       },
       segment: {
-        "Segment Rows Processed": { multiplier: 20, description: "Organizes customer data into meaningful segments for personalized marketing.", unit: "Rows" },
-        "Batch Activation": { multiplier: 10, description: "Activates customer data in large batches, enabling scalable campaign deployment.", unit: "Rows" },
-        "Activate DMO (Streaming)": { multiplier: 1600, description: "Enables continuous activation of marketing operations for streaming datasets.", unit: "Rows" }
+        "Segment Rows Processed": { multiplier: 20, description: "Organizes customer data into meaningful segments for personalized marketing. Usage is calculated based on the number of records processed.", unit: "Rows" },
+        "Batch Activation": { multiplier: 10, description: "Activates customer data in large batches, enabling scalable campaign deployment. Usage is calculated based on the number of records processed.", unit: "Rows" },
+        "Activate DMO (Streaming)": { multiplier: 1600, description: "Enables continuous activation of marketing operations for streaming datasets. Usage is calculated based on the number of records processed.", unit: "Rows" }
       }
     };
 
