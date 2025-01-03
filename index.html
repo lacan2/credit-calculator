@@ -71,9 +71,9 @@
 <body>
   <div class="calculator">
     <h2>Credit Consumption Calculator</h2>
-    <label for="area">Select area:</label>
+    <label for="area">Select Category:</label>
     <select id="area" onchange="updateTasks()">
-      <option value="" disabled selected>Select an area</option>
+      <option value="" disabled selected>Select a category</option>
       <option value="connect">Connect, Harmonize, and Unify</option>
       <option value="analyze">Analyze and Predict</option>
       <option value="act">Act</option>
@@ -81,9 +81,9 @@
       <option value="segment">Segment and Activation</option>
     </select>
 
-    <label for="task">Select task:</label>
+    <label for="task">Select Use Type:</label>
     <select id="task" onchange="updateDescriptionAndUnits()">
-      <option value="" disabled selected>Select a task</option>
+      <option value="" disabled selected>Select a use type</option>
     </select>
 
     <label for="data" id="dataLabel">Enter the volume of data processed:</label>
@@ -96,55 +96,55 @@
 
   <div class="info-popup" id="infoPopup">
     <h2 id="infoTitle">Information</h2>
-    <p id="infoDescription">Select a category or task to see detailed information.</p>
+    <p id="infoDescription">Select a category or use type to see detailed information.</p>
   </div>
 
   <script>
     const areaDescriptions = {
-      connect: "This area focuses on connecting and integrating data across systems, ensuring a unified flow of information. Tasks here allow businesses to harmonize datasets, unify profiles, and securely share data across platforms, enabling efficient collaboration and decision-making.",
-      analyze: "This area equips organizations with analytical tools to transform raw data into actionable insights. It supports complex data calculations and predictions, helping businesses understand trends, optimize operations, and make data-driven decisions.",
-      act: "This area emphasizes execution, enabling real-time interactions and actions based on processed data. Tasks here facilitate seamless campaign execution, instant data-driven actions, and robust real-time operations across marketing and operational platforms.",
+      connect: "This category focuses on connecting and integrating data across systems, ensuring a unified flow of information. It includes tasks like data pipelines, federation, profile unification, and private connect, enabling efficient collaboration and decision-making.",
+      analyze: "This category equips organizations with analytical tools to transform raw data into actionable insights. It supports complex data calculations and predictions, helping businesses understand trends and optimize operations.",
+      act: "This category emphasizes execution, enabling real-time interactions and actions based on processed data. It facilitates seamless campaign execution, instant data-driven actions, and robust real-time operations across marketing and operational platforms.",
       realtime: "E2E Real-Time Processing ensures high-speed data handling, enabling businesses to react instantly to events. It supports real-time decision-making and facilitates the handling of critical event-driven workflows.",
       segment: "Segment and Activation focuses on tailoring and delivering personalized marketing strategies. By enabling segmentation and activation of specific customer data, it supports targeted campaigns that enhance user engagement and drive conversion."
     };
 
     const multipliers = {
       connect: {
-        "Data Pipeline (Batch)": { multiplier: 2000, description: "Processes data in structured batches for harmonization and unification across systems, ensuring accuracy and consistency in downstream operations.", unit: "rows" },
-        "Data Pipeline (Streaming)": { multiplier: 5000, description: "Manages continuous data streams in real-time scenarios, supporting immediate data availability and use in dynamic systems.", unit: "rows" },
-        "Data Transforms": { multiplier: 400, description: "Converts raw, structured, or semi-structured data into formats optimized for analytics and sharing across applications.", unit: "rows" },
-        "Unstructured Data Processed": { multiplier: 60, description: "Enables the handling of unstructured data formats such as images, videos, and text, making them accessible for analysis and integration.", unit: "MB" },
-        "Data Federation or Sharing": { multiplier: 70, description: "Facilitates the secure sharing or federated access of large datasets across internal or external systems.", unit: "rows" },
-        "Data Share": { multiplier: 800, description: "Supports sharing pre-processed structured data with external partners or systems for collaborative or operational purposes.", unit: "rows" },
-        "Profile Unification": { multiplier: 100000, description: "Consolidates multiple data points across various sources into unified profiles, providing a single source of truth for customer data.", unit: "rows" }
+        "Data Pipeline (Batch)": { multiplier: 2000, description: "Processes data in structured batches for harmonization and unification across systems.", unit: "Rows" },
+        "Data Pipeline (Streaming)": { multiplier: 5000, description: "Manages continuous data streams in real-time scenarios, supporting immediate data availability.", unit: "Rows" },
+        "Data Transforms": { multiplier: 400, description: "Converts raw, structured, or semi-structured data into formats optimized for analytics and sharing.", unit: "Rows" },
+        "Unstructured Data Processed": { multiplier: 60, description: "Handles unstructured data formats such as images, videos, and text, making them accessible for analysis.", unit: "MB" },
+        "Data Federation or Sharing": { multiplier: 70, description: "Facilitates the secure sharing or federated access of large datasets across systems.", unit: "Rows" },
+        "Data Share": { multiplier: 800, description: "Supports sharing pre-processed structured data with external partners or systems.", unit: "Rows" },
+        "Profile Unification": { multiplier: 100000, description: "Consolidates multiple data points across sources into unified profiles for accurate customer data.", unit: "Rows" },
+        "Private Connect Data Processed": { multiplier: 500, description: "Ensures secure processing of sensitive data over private connections for compliance and privacy.", unit: "Gb" }
       },
       analyze: {
-        "Calculated Insights (Batch)": { multiplier: 15, description: "Generates detailed reports and insights from batch-processed data, revealing patterns and trends for strategic planning.", unit: "rows" },
-        "Calculated Insights (Streaming)": { multiplier: 800, description: "Produces real-time insights by analyzing streaming data, enabling immediate actions and informed decisions.", unit: "rows" },
-        "Inferences": { multiplier: 3500, description: "Applies advanced AI and machine learning models to derive predictions and inferences from structured datasets.", unit: "rows" }
+        "Calculated Insights (Batch)": { multiplier: 15, description: "Generates detailed reports and insights from batch-processed data, revealing patterns and trends.", unit: "Rows" },
+        "Calculated Insights (Streaming)": { multiplier: 800, description: "Produces real-time insights by analyzing streaming data, enabling immediate actions.", unit: "Rows" },
+        "Inferences": { multiplier: 3500, description: "Applies advanced AI and machine learning models to derive predictions and inferences from datasets.", unit: "Inferences" }
       },
       act: {
-        "Data Queries": { multiplier: 2, description: "Executes predefined or dynamic queries on datasets to extract relevant information for operational or strategic needs.", unit: "rows" },
-        "Streaming Actions": { multiplier: 800, description: "Enables real-time execution of actions based on streaming data, such as triggering notifications or updating dashboards.", unit: "rows" },
-        "Batch Activation": { multiplier: 10, description: "Activates datasets in bulk for targeted campaigns, ensuring efficiency in large-scale operations.", unit: "rows" },
-        "Activate DMO (Streaming)": { multiplier: 1600, description: "Supports the dynamic activation of marketing operations using live streaming data, ensuring real-time relevance.", unit: "rows" }
+        "Data Queries": { multiplier: 2, description: "Executes predefined or dynamic queries on datasets to extract relevant information.", unit: "Rows" },
+        "Streaming Actions": { multiplier: 800, description: "Enables real-time execution of actions based on streaming data, such as triggering notifications.", unit: "Rows" },
+        "Batch Activation": { multiplier: 10, description: "Activates datasets in bulk for targeted campaigns, ensuring efficiency in operations.", unit: "Rows" },
+        "Activate DMO (Streaming)": { multiplier: 1600, description: "Supports the dynamic activation of marketing operations using live streaming data.", unit: "Rows" }
       },
       realtime: {
-        "Sub-second Real-Time Events": { multiplier: 70000, description: "Handles high-frequency events in milliseconds, ensuring immediate data processing and operational responses.", unit: "events" }
+        "Sub-second Real-Time Events": { multiplier: 70000, description: "Handles high-frequency events in milliseconds, ensuring immediate data processing.", unit: "Events & API" }
       },
       segment: {
-        "Segment Rows Processed": { multiplier: 20, description: "Organizes customer data into meaningful segments for personalized marketing campaigns and improved engagement.", unit: "rows" },
-        "Batch Activation": { multiplier: 10, description: "Activates customer data in large batches, enabling targeted and scalable campaign deployment.", unit: "rows" },
-        "Activate DMO (Streaming)": { multiplier: 1600, description: "Enables the continuous activation of dynamic marketing operations for streaming datasets, ensuring timely campaign execution.", unit: "rows" }
+        "Segment Rows Processed": { multiplier: 20, description: "Organizes customer data into meaningful segments for personalized marketing.", unit: "Rows" },
+        "Batch Activation": { multiplier: 10, description: "Activates customer data in large batches, enabling scalable campaign deployment.", unit: "Rows" },
+        "Activate DMO (Streaming)": { multiplier: 1600, description: "Enables continuous activation of marketing operations for streaming datasets.", unit: "Rows" }
       }
     };
 
     function updateTasks() {
       const area = document.getElementById("area").value;
       const taskSelect = document.getElementById("task");
-      const infoPopup = document.getElementById("infoPopup");
 
-      taskSelect.innerHTML = '<option value="" disabled selected>Select a task</option>';
+      taskSelect.innerHTML = '<option value="" disabled selected>Select a use type</option>';
 
       if (areaDescriptions[area]) {
         document.getElementById("infoTitle").textContent = "Category: " + area;
@@ -164,12 +164,12 @@
     function updateDescriptionAndUnits() {
       const area = document.getElementById("area").value;
       const task = document.getElementById("task").value;
-      const infoPopup = document.getElementById("infoPopup");
 
       if (multipliers[area] && multipliers[area][task]) {
         const taskInfo = multipliers[area][task];
-        document.getElementById("infoTitle").textContent = "Task: " + task;
-        document.getElementById("infoDescription").textContent = taskInfo.description + " Multiplier: " + taskInfo.multiplier + " credits per " + taskInfo.unit + ".";
+        document.getElementById("infoTitle").textContent = "Use Type: " + task;
+        document.getElementById("infoDescription").textContent = taskInfo.description;
+        document.getElementById("dataLabel").textContent = `Enter the volume of data processed (${taskInfo.unit}):`;
       }
     }
 
@@ -179,12 +179,12 @@
       const data = parseFloat(document.getElementById("data").value);
 
       if (!area) {
-        alert("Please select an area.");
+        alert("Please select a category.");
         return;
       }
 
       if (!task) {
-        alert("Please select a task.");
+        alert("Please select a use type.");
         return;
       }
 
