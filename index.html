@@ -59,15 +59,11 @@
       color: #555;
       line-height: 1.6;
     }
-    .usage-entry {
-      margin-bottom: 16px;
-    }
   </style>
 </head>
 <body>
   <div class="calculator">
     <h2>Credit Consumption Calculator</h2>
-
     <label for="area">Select Category:</label>
     <select id="area" onchange="updateTasks()">
       <option value="" disabled selected>Select a category</option>
@@ -78,10 +74,15 @@
       <option value="segment">Segment and Activation</option>
     </select>
 
-    <div id="usageEntries"></div>
+    <label for="task">Select Usage Type:</label>
+    <select id="task" onchange="updateDescriptionAndUnits()">
+      <option value="" disabled selected>Select a usage type</option>
+    </select>
 
-    <button onclick="addUsageEntry()">Add Another Usage Entry</button>
-    <button onclick="calculateTotalCredits()">Calculate Total Credits</button>
+    <label for="data" id="dataLabel">Enter the volume of data processed:</label>
+    <input type="number" id="data" placeholder="Enter amount of data">
+
+    <button onclick="calculateCredits()">Calculate Credits</button>
 
     <div class="result" id="result"></div>
   </div>
@@ -92,74 +93,98 @@
 
   <script>
     const areaDescriptions = {
-      connect: "This category focuses on connecting and integrating data across systems, ensuring a unified flow of information. It includes tasks like data pipelines, federation, profile unification, and private connect, enabling efficient collaboration and decision-making.",
+      connect: "Functionalities connecting and integrating data across systems.",
       analyze: "Analytical tools to transform raw data into actionable insights, data calculations and predictions.",
-      act: "Creating insights, building AI functionality, querying for reports and dashboards, integrating data with apps, and creating automations.",
-      realtime: "E2E Real-Time Processing ensures high-speed data handling, enabling businesses to react instantly to events. It supports real-time decision-making and facilitates the handling of critical event-driven workflows.",
-      segment: "Segment and Activation focuses on tailoring and delivering personalized marketing strategies. By enabling segmentation and activation of specific customer data, it supports targeted campaigns that enhance user engagement and drive conversion."
+      act: "Functionalities for integrating data with apps, and creating automation.",
+      realtime: "E2E Real-Time Processing, to process and analyze data as it’s generated.",
+      segment: "For the segmentation and activation of specific customer data."
     };
 
     const multipliers = {
       connect: {
-        "Data Pipeline (Batch)": { multiplier: 2000, description: "Processes data in structured batches for harmonization and unification across systems.", unit: "Rows" },
-        "Data Pipeline (Streaming)": { multiplier: 5000, description: "Manages continuous data streams in real-time scenarios.", unit: "Rows" },
-        "Data Transforms": { multiplier: 400, description: "Converts raw data into formats optimized for analytics.", unit: "Rows" }
+        "Data Pipeline (Batch)": { multiplier: 2000, description: "Processes data in structured batches for harmonization and unification across systems. Usage is calculated based on the amount of batch data processed by Data Cloud data streams across all connectors.", unit: "Rows" },
+        "Data Pipeline (Streaming)": { multiplier: 5000, description: "Manages continuous data streams in real-time scenarios, supporting immediate data availability. Usage is calculated based on the number of records ingested by data streams with stream processing, including web, mobile, and streaming ingestion APIs.", unit: "Rows" },
+        "Data Transforms": { multiplier: 400, description: "Converts raw, structured, or semi-structured data into formats optimized for analytics and sharing. Usage is calculated based on the higher of the number of rows read or written. For incremental batch data transforms, after the first run, usage is based on the number of rows that have changed since the previous run.", unit: "Rows" },
+        "Unstructured Data Processed": { multiplier: 60, description: "Handles unstructured data formats such as images, videos, and text, making them accessible for analysis. Usage is calculated based on the amount of unstructured data processed. For example, processing 100 PDF documents of 1 MB each results in 100 MB of usage.", unit: "MB" },
+        "Data Federation or Sharing": { multiplier: 70, description: "Facilitates the secure sharing or federated access of large datasets across systems. For data federation, usage is calculated based on the number of records returned from the source. For data sharing, usage is based on the number of rows returned to fulfill an external data lake’s request, with considerations for cross-region or cross-cloud queries.", unit: "Rows" },
+        "Data Share": { multiplier: 800, description: "Supports sharing pre-processed structured data with external partners or systems. Usage is calculated based on the number of new and changed records processed as part of the data share.", unit: "Rows" },
+        "Profile Unification": { multiplier: 100000, description: "Consolidates multiple data points across sources into unified profiles for accurate customer data. Usage is calculated based on the number of source profiles processed by an identity resolution ruleset. After the initial run, only new or modified source profiles are counted.", unit: "Rows" },
+        "Private Connect Data Processed": { multiplier: 500, description: "Ensures secure processing of sensitive data over private connections for compliance and privacy. Usage is calculated based on the volume of data in GBs transferred over the private network route, applicable to both data ingress into Data Cloud and egress to external data sources.", unit: "GB" }
       },
       analyze: {
-        "Calculated Insights (Batch)": { multiplier: 15, description: "Generates detailed reports and insights from batch-processed data.", unit: "Rows" },
-        "Calculated Insights (Streaming)": { multiplier: 800, description: "Produces real-time insights by analyzing streaming data.", unit: "Rows" }
+        "Calculated Insights (Batch)": { multiplier: 15, description: "Generates detailed reports and insights from batch-processed data, revealing patterns and trends. Usage is calculated based on the number of records in all underlying objects used in creating the Calculated Insight each time it runs.", unit: "Rows" },
+        "Calculated Insights (Streaming)": { multiplier: 800, description: "Produces real-time insights by analyzing streaming data, enabling immediate actions. Usage is calculated based on the number of records processed.", unit: "Rows" },
+        "Inferences": { multiplier: 3500, description: "Applies advanced AI and machine learning models to derive predictions and inferences from datasets. Usage is calculated based on the count of inferences, or outputs, of an AI Model in Einstein Studio.", unit: "Inferences" }
+      },
+      act: {
+        "Data Queries": { multiplier: 2, description: "Executes predefined or dynamic queries on datasets to extract relevant information. Usage is calculated based on the number of records processed, which depends on the query structure and related factors such as the total number of records in the queried objects.", unit: "Rows" },
+        "Streaming Actions": { multiplier: 800, description: "Enables real-time execution of actions based on streaming data, such as triggering notifications. Usage is calculated based on the number of records processed.", unit: "Rows" }
+      },
+      realtime: {
+        "Sub-second Real-Time Events": { multiplier: 70000, description: "Handles high-frequency events in milliseconds, ensuring immediate data processing. Usage is calculated based on the sum of profile events, engagement events, and API calls processed in the sub-second real-time layer, including web and mobile SDK traffic.", unit: "Events & API" }
+      },
+      segment: {
+        "Segment Rows Processed": { multiplier: 20, description: "Organizes customer data into meaningful segments for personalized marketing. Usage is calculated based on the number of records processed.", unit: "Rows" },
+        "Batch Activation": { multiplier: 10, description: "Activates customer data in large batches, enabling scalable campaign deployment. Usage is calculated based on the number of records processed.", unit: "Rows" },
+        "Activate DMO (Streaming)": { multiplier: 1600, description: "Enables continuous activation of marketing operations for streaming datasets. Usage is calculated based on the number of records processed.", unit: "Rows" }
       }
     };
 
     function updateTasks() {
       const area = document.getElementById("area").value;
-      document.getElementById("infoDescription").textContent = areaDescriptions[area] || "";
+      const taskSelect = document.getElementById("task");
+
+      taskSelect.innerHTML = '<option value="" disabled selected>Select a usage type</option>';
+
+      if (areaDescriptions[area]) {
+        document.getElementById("infoDescription").textContent = areaDescriptions[area];
+      }
+
+      if (multipliers[area]) {
+        for (const task in multipliers[area]) {
+          const option = document.createElement("option");
+          option.value = task;
+          option.textContent = task;
+          taskSelect.appendChild(option);
+        }
+      }
     }
 
-    function addUsageEntry() {
+    function updateDescriptionAndUnits() {
       const area = document.getElementById("area").value;
+      const task = document.getElementById("task").value;
+
+      if (multipliers[area] && multipliers[area][task]) {
+        const taskInfo = multipliers[area][task];
+        document.getElementById("infoDescription").textContent = taskInfo.description;
+        document.getElementById("dataLabel").textContent = `Enter the volume of data processed (${taskInfo.unit}):`;
+      }
+    }
+
+    function calculateCredits() {
+      const area = document.getElementById("area").value;
+      const task = document.getElementById("task").value;
+      const data = parseFloat(document.getElementById("data").value);
+
       if (!area) {
-        alert("Please select a category before adding usage entries.");
+        alert("Please select a category.");
         return;
       }
 
-      const entryDiv = document.createElement("div");
-      entryDiv.className = "usage-entry";
-
-      const taskSelect = document.createElement("select");
-      taskSelect.innerHTML = '<option value="" disabled selected>Select a usage type</option>';
-      for (const task in multipliers[area]) {
-        const option = document.createElement("option");
-        option.value = task;
-        option.textContent = task;
-        taskSelect.appendChild(option);
+      if (!task) {
+        alert("Please select a usage type.");
+        return;
       }
 
-      const dataInput = document.createElement("input");
-      dataInput.type = "number";
-      dataInput.placeholder = "Enter volume of data";
+      if (isNaN(data) || data <= 0) {
+        alert("Please enter a valid amount of data.");
+        return;
+      }
 
-      entryDiv.appendChild(taskSelect);
-      entryDiv.appendChild(dataInput);
-      document.getElementById("usageEntries").appendChild(entryDiv);
-    }
+      const multiplier = multipliers[area][task].multiplier;
+      const credits = (data / 1_000_000) * multiplier;
 
-    function calculateTotalCredits() {
-      const entries = document.querySelectorAll(".usage-entry");
-      let totalCredits = 0;
-
-      entries.forEach(entry => {
-        const task = entry.querySelector("select").value;
-        const volume = parseFloat(entry.querySelector("input").value);
-        const area = document.getElementById("area").value;
-
-        if (task && !isNaN(volume) && volume > 0) {
-          const multiplier = multipliers[area][task].multiplier;
-          totalCredits += (volume / 1_000_000) * multiplier;
-        }
-      });
-
-      document.getElementById("result").textContent = `Total Credits Consumed: ${totalCredits.toFixed(2)}`;
+      document.getElementById("result").textContent = `Credits Consumed: ${credits.toFixed(2)}`;
     }
   </script>
 </body>
