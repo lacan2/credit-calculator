@@ -94,8 +94,8 @@
   <script>
     const areaDescriptions = {
       connect: "This category focuses on connecting and integrating data across systems, ensuring a unified flow of information. It includes tasks like data pipelines, federation, profile unification, and private connect, enabling efficient collaboration and decision-making.",
-      analyze: "This category equips organizations with analytical tools to transform raw data into actionable insights. It supports complex data calculations and predictions, helping businesses understand trends and optimize operations.",
-      act: "This category emphasizes execution, enabling real-time interactions and actions based on processed data. It facilitates seamless campaign execution, instant data-driven actions, and robust real-time operations across marketing and operational platforms.",
+      analyze: "Analytical tools to transform raw data into actionable insights, data calculations and predictions.",
+      act: "Creating insights, building AI functionality, querying for reports and dashboards, integrating data with apps, and creating automations.",
       realtime: "E2E Real-Time Processing ensures high-speed data handling, enabling businesses to react instantly to events. It supports real-time decision-making and facilitates the handling of critical event-driven workflows.",
       segment: "Segment and Activation focuses on tailoring and delivering personalized marketing strategies. By enabling segmentation and activation of specific customer data, it supports targeted campaigns that enhance user engagement and drive conversion."
     };
@@ -119,8 +119,6 @@
       act: {
         "Data Queries": { multiplier: 2, description: "Executes predefined or dynamic queries on datasets to extract relevant information. Usage is calculated based on the number of records processed, which depends on the query structure and related factors such as the total number of records in the queried objects.", unit: "Rows" },
         "Streaming Actions": { multiplier: 800, description: "Enables real-time execution of actions based on streaming data, such as triggering notifications. Usage is calculated based on the number of records processed.", unit: "Rows" },
-        "Batch Activation": { multiplier: 10, description: "Activates datasets in bulk for targeted campaigns, ensuring efficiency in operations. Usage is calculated based on the number of records processed.", unit: "Rows" },
-        "Activate DMO (Streaming)": { multiplier: 1600, description: "Supports the dynamic activation of marketing operations using live streaming data. Usage is calculated based on the number of records processed.", unit: "Rows" }
       },
       realtime: {
         "Sub-second Real-Time Events": { multiplier: 70000, description: "Handles high-frequency events in milliseconds, ensuring immediate data processing. Usage is calculated based on the sum of profile events, engagement events, and API calls processed in the sub-second real-time layer, including web and mobile SDK traffic.", unit: "Events & API" }
