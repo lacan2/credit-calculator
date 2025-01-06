@@ -96,7 +96,7 @@
       connect: "This category focuses on connecting and integrating data across systems, ensuring a unified flow of information. It includes tasks like data pipelines, federation, profile unification, and private connect, enabling efficient collaboration and decision-making.",
       analyze: "Analytical tools to transform raw data into actionable insights, data calculations and predictions.",
       act: "Creating insights, building AI functionality, querying for reports and dashboards, integrating data with apps, and creating automations.",
-      realtime: "E2E Real-Time Processing ensures high-speed data handling, enabling businesses to react instantly to events. It supports real-time decision-making and facilitates the handling of critical event-driven workflows.",
+      realtime: "E2E Real-Time Processing, high-speed data handling, enabling businesses to react instantly to events. It supports real-time decision-making and facilitates the handling of critical event-driven workflows.",
       segment: "Segment and Activation focuses on tailoring and delivering personalized marketing strategies. By enabling segmentation and activation of specific customer data, it supports targeted campaigns that enhance user engagement and drive conversion."
     };
 
@@ -109,7 +109,7 @@
         "Data Federation or Sharing": { multiplier: 70, description: "Facilitates the secure sharing or federated access of large datasets across systems. For data federation, usage is calculated based on the number of records returned from the source. For data sharing, usage is based on the number of rows returned to fulfill an external data lake’s request, with considerations for cross-region or cross-cloud queries.", unit: "Rows" },
         "Data Share": { multiplier: 800, description: "Supports sharing pre-processed structured data with external partners or systems. Usage is calculated based on the number of new and changed records processed as part of the data share.", unit: "Rows" },
         "Profile Unification": { multiplier: 100000, description: "Consolidates multiple data points across sources into unified profiles for accurate customer data. Usage is calculated based on the number of source profiles processed by an identity resolution ruleset. After the initial run, only new or modified source profiles are counted.", unit: "Rows" },
-        "Private Connect Data Processed": { multiplier: 500, description: "Ensures secure processing of sensitive data over private connections for compliance and privacy. Usage is calculated based on the volume of data in GBs transferred over the private network route, applicable to both data ingress into Data Cloud and egress to external data sources.", unit: "Gb" }
+        "Private Connect Data Processed": { multiplier: 500, description: "Ensures secure processing of sensitive data over private connections for compliance and privacy. Usage is calculated based on the volume of data in GBs transferred over the private network route, applicable to both data ingress into Data Cloud and egress to external data sources.", unit: "GB" }
       },
       analyze: {
         "Calculated Insights (Batch)": { multiplier: 15, description: "Generates detailed reports and insights from batch-processed data, revealing patterns and trends. Usage is calculated based on the number of records in all underlying objects used in creating the Calculated Insight each time it runs.", unit: "Rows" },
@@ -118,7 +118,7 @@
       },
       act: {
         "Data Queries": { multiplier: 2, description: "Executes predefined or dynamic queries on datasets to extract relevant information. Usage is calculated based on the number of records processed, which depends on the query structure and related factors such as the total number of records in the queried objects.", unit: "Rows" },
-        "Streaming Actions": { multiplier: 800, description: "Enables real-time execution of actions based on streaming data, such as triggering notifications. Usage is calculated based on the number of records processed.", unit: "Rows" },
+        "Streaming Actions": { multiplier: 800, description: "Enables real-time execution of actions based on streaming data, such as triggering notifications. Usage is calculated based on the number of records processed.", unit: "Rows" }
       },
       realtime: {
         "Sub-second Real-Time Events": { multiplier: 70000, description: "Handles high-frequency events in milliseconds, ensuring immediate data processing. Usage is calculated based on the sum of profile events, engagement events, and API calls processed in the sub-second real-time layer, including web and mobile SDK traffic.", unit: "Events & API" }
